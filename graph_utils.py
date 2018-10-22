@@ -14,6 +14,8 @@ if __name__ == '__main__':
 	input_path = '/home/hduser/iit_data/ask_ubuntu/year_wise_named_graphs'
 	output_path = '/home/hduser/iit_data/ask_ubuntu/year_wise_graphs_pajek'
 
+	os.makedirs(output_path)
+
 	for file in listdir(input_path):
 		file_name = file.split('.')[0]
 		if os.stat(join(input_path, file)).st_size != 0:

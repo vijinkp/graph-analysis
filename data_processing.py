@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from sklearn.externals import joblib
 
 
 input_schema = ['id', 'post_type_id', 'accepted_answer_id', 'creation_date', 'score', 'view_count', 'body','owner_user_id','lasteditor_user_id','lasteditor_display_name','lastedit_date','lastactivity_date' ,'title' ,'tags' ,'answer_count' ,'comment_count' ,'favorite_count' ,'community_owned_date' ]
@@ -10,6 +11,11 @@ data = pd.read_csv('/home/hduser/iit_data/ask_ubuntu/posts.csv', header=None, se
 # Cleaned tag set and year
 data['creation_year'] = data.creation_date.apply(lambda x : x[0:4])
 data['cleaned_tags'] = data.tags.apply(lambda x : str(x).replace("><", ",").replace(">", "").replace("<", "").strip())
+
+# Master list of tags
+tag_set = set([z for y in [x.split(',') for x in data.cleaned_tags.tolist() if x != 'nan'] for z in y])
+master_map = {tag : index for index, tag in enumerate(tag_set)}
+joblib.dump(master_map, '/home/hduser/iit_data/ask_ubuntu/master_tag_map.pkl', compress=1)
 
 # Question posts
 question_posts =  data[data.post_type_id == 1]
