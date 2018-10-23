@@ -13,9 +13,9 @@ data['creation_year'] = data.creation_date.apply(lambda x : x[0:4])
 data['cleaned_tags'] = data.tags.apply(lambda x : str(x).replace("><", ",").replace(">", "").replace("<", "").strip())
 
 # Master list of tags
-tag_set = set([z for y in [x.split(',') for x in data.cleaned_tags.tolist() if x != 'nan'] for z in y])
-master_map = {tag : index for index, tag in enumerate(tag_set)}
-joblib.dump(master_map, '/home/hduser/iit_data/ask_ubuntu/master_tag_map.pkl', compress=1)
+# tag_set = set([z for y in [x.split(',') for x in data.cleaned_tags.tolist() if x != 'nan'] for z in y])
+# master_map = {tag : index for index, tag in enumerate(tag_set)}
+# joblib.dump(master_map, '/home/hduser/iit_data/ask_ubuntu/master_tag_map.pkl', compress=1)
 
 # Question posts
 question_posts =  data[data.post_type_id == 1]

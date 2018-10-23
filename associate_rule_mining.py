@@ -45,7 +45,6 @@ if __name__ == '__main__':
 
 	root_folder = '/home/hduser/iit_data/ask_ubuntu/'
 
-	os.makedirs(os.path.join(root_folder, 'year_wise'))
 	os.makedirs(os.path.join(root_folder, 'year_wise_graphs'))
 	os.makedirs(os.path.join(root_folder, 'year_wise_named_graphs'))
 	os.makedirs(os.path.join(root_folder, 'models'))
