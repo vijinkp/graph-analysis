@@ -16,7 +16,7 @@ def get_graphs(year, folder_path, master_map):
 
 def create_kernel_csv(kernel, row_labels, col_labels, file_path):
 	str_kernel = np.char.mod('%d', kernel)
-	csv_str = ',' + ','.join(col_labels)+ '\n'+ '\n'.join([row_label[index]+ ',' + ','.join(x) for index, x in enumerate(kernel)])
+	csv_str = ',' + ','.join(col_labels)+ '\n'+ '\n'.join([row_labels[index]+ ',' + ','.join(x) for index, x in enumerate(str_kernel)])
 	with open(file_path, 'w') as fp:
 		fp.write(csv_str)
 
@@ -35,7 +35,6 @@ if __name__ == '__main__':
 	year_tup = list(zip(years[0:], years[1:]))
 
 	for yr1, yr2 in year_tup:
-		print(yr1, yr2)
 		yr1_graphs , yr1_labels = get_graphs(yr1, os.path.join(root_folder, str(yr1), 'communities_pajek'), master_map)
 		yr2_graphs , yr2_labels = get_graphs(yr2, os.path.join(root_folder, str(yr2), 'communities_pajek'), master_map)
 
@@ -51,8 +50,7 @@ if __name__ == '__main__':
 		# only merge and one to one matching is possible, split is not possible
 		# split can be defined by setting a threshold which will help to identify if a community is matched with more than one on next time interval
 		best_match = np.argmax(K_WL_subset, axis=1)
-		print(len(yr1_graphs), len(yr2_graphs))
-		print(best_match)
 		with open('{0}/WL-{1}-{2}-best-match.txt'.format(outpath, yr1, yr2), 'w')as fp:
 			for index, x in enumerate(best_match):
-				fp.write('{0}, {1}\n'.format(yr1_labels[index],yr2_labels[int(x)]))
+				if K_WL_subset[index][x] > 1:
+					fp.write('{0}, {1}\n'.format(yr1_labels[index],yr2_labels[int(x)]))

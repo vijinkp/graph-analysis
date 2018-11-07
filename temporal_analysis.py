@@ -5,8 +5,8 @@ from os import listdir
 
 
 master_chains = []
-years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]
-community_data_folder = '/home/vparambath/workpad/iith/year_wise_communities'
+years = [2010, 2011, 2012, 2013, 2014, 2015, 2016]
+community_data_folder = '/home/hduser/iit_data/ask_ubuntu/year_wise_communities'
 #years = [2010, 2011]
 
 def add(pair):
@@ -96,8 +96,8 @@ def create_vis_data(graph):
 				
 
 if __name__ == '__main__':
-	root_folder = '/home/vparambath/workpad/iith/models/graph_similarity_matrices'
-	vis_folder = '/home/vparambath/workpad/iith/models/visualization'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu/models/graph_similarity_matrices'
+	vis_folder = '/home/hduser/iit_data/ask_ubuntu/models/visualization'
 	vis_template = 'vis_template.html'
 
 	create_temporal_chains(root_folder)
