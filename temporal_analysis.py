@@ -1,12 +1,12 @@
+# https://github.com/almende/vis
 import numpy as np
-import pandas as pd
-from sklearn.externals import joblib
-from os.path import join
+import os
 from os import listdir
 
 
 master_chains = []
 years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]
+community_data_folder = '/home/vparambath/workpad/iith/year_wise_communities'
 #years = [2010, 2011]
 
 def add(pair):
@@ -55,13 +55,25 @@ def merge_pairs(file):
 def create_temporal_chains(root_folder):
 	for year in years :
 		filename = 'WL-{0}-{1}-best-match.txt'.format(year, year+1)
-		merged_pairs = merge_pairs(join(root_folder, filename))
+		merged_pairs = merge_pairs(os.path.join(root_folder, filename))
 		if master_chains:
 			for pair in merged_pairs:
 				add(pair)
 		else:
 			[master_chains.append(pair) for pair in merged_pairs]
 
+def get_tags(community_name):
+	year = community_name.split('_')[0]
+	community = community_name.split('_')[1]
+	file_path = '{0}/{1}/community_tags/{2}_tags.txt'.format(community_data_folder, year, community)
+	with open(file_path, 'r') as fp:
+		tags = fp.read()
+	return tags.replace('\n', '<br>')
+
+
+def apply_vis_js_template(nodes, edges):
+	return "var nodes = [{0}];\nvar edges = [{1}];".format(','.join(nodes), ','.join(edges))
+	
 def create_vis_data(graph):
 	node_count = 0
 	node_map = {}
@@ -70,25 +82,33 @@ def create_vis_data(graph):
 	for key, value in graph.items():
 		if key not in node_map:
 			node_count = node_count + 1
-			node_map[key]	= node_count
-			nodes.append({'id' : node_map[key], 'label' : key, 'shape' : 'ellipse'})
+			node_map[key] = node_count
+			nodes.append("{{id : {0},  label: '{1}', title : '{2}', shape : 'ellipse'}}".format(node_map[key], key, get_tags(key)))
 
 		for x in value:
 			if x not in node_map:
 				node_count = node_count + 1
 				node_map[x]	= node_count
-				nodes.append({'id' : node_map[x], 'label' : x, 'shape' : 'ellipse'})
-			edges.append({'from' : node_map[x], 'to' : node_map[key], 'arrows': 'to', 'width' : 3, 'length' :200})
+				nodes.append("{{id : {0}, label : '{1}', title : '{2}', shape : 'ellipse'}}".format(node_map[x], x, get_tags(x)))
+			edges.append("{{from : {0}, to : {1}, arrows: 'to', width : 3, length :200}}".format(node_map[x], node_map[key]))
 
-	return (nodes, edges)
+	return apply_vis_js_template(nodes, edges)
 				
 
 if __name__ == '__main__':
-	root_folder = '/home/hduser/iit_data/ask_ubuntu/models/graph_similarity_matrices'
+	root_folder = '/home/vparambath/workpad/iith/models/graph_similarity_matrices'
+	vis_folder = '/home/vparambath/workpad/iith/models/visualization'
+	vis_template = 'vis_template.html'
+
 	create_temporal_chains(root_folder)
-	print('##############################################')
+
+	with open(vis_template, 'r') as fp:
+		template_data = fp.read()
+
+	counter = 0
 	for chain in master_chains:
-		print('**********************************')
-		nodes ,edges = create_vis_data(chain)
-		print('nodes : {0}'.format(nodes))
-		print('edges : {0}'.format(edges))
+		vis_data = create_vis_data(chain)
+		file_name = '{0}_chain.html'.format(counter)
+		with open(os.path.join(vis_folder, file_name), 'w') as fp:
+			fp.write(template_data.format(file_name.split('.')[0], vis_data))
+		counter += 1
