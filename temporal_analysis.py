@@ -2,11 +2,13 @@
 import numpy as np
 import os
 from os import listdir
+from collections import Counter
 
 
 master_chains = []
 years = [2010, 2011, 2012, 2013, 2014, 2015, 2016]
-community_data_folder = '/home/hduser/iit_data/ask_ubuntu/year_wise_communities'
+community_data_folder = '/home/vparambath/workpad/iith/year_wise_communities'
+year_groups = {2010 : 0, 2011 : 1, 2012 : 2, 2013 : 3, 2014 : 4, 2015 : 5, 2016 : 6, 2017 : 7, 2018 : 8}
 #years = [2010, 2011]
 
 def add(pair):
@@ -70,6 +72,8 @@ def get_tags(community_name):
 		tags = fp.read()
 	return tags.replace('\n', '<br>')
 
+def get_common_tags(tags, n = 10):
+	return [tag for tag, tag_count in Counter(tags).most_common(n)]
 
 def apply_vis_js_template(nodes, edges):
 	return "var nodes = [{0}];\nvar edges = [{1}];".format(','.join(nodes), ','.join(edges))
@@ -79,25 +83,30 @@ def create_vis_data(graph):
 	node_map = {}
 	nodes = []
 	edges = []
+	graph_tags = []
 	for key, value in graph.items():
 		if key not in node_map:
 			node_count = node_count + 1
 			node_map[key] = node_count
-			nodes.append("{{id : {0},  label: '{1}', title : '{2}', shape : 'ellipse'}}".format(node_map[key], key, get_tags(key)))
+			h_tags = get_tags(key)
+			graph_tags.extend(h_tags.split('<br>'))
+			nodes.append("{{id : {0},  label: '{1}', title : '{2}', shape : 'circle', group : {3}}}".format(node_map[key], key, h_tags, year_groups[int(key.split('_')[0])]))
 
 		for x in value:
 			if x not in node_map:
 				node_count = node_count + 1
 				node_map[x]	= node_count
-				nodes.append("{{id : {0}, label : '{1}', title : '{2}', shape : 'ellipse'}}".format(node_map[x], x, get_tags(x)))
+				t_tags = get_tags(x)
+				graph_tags.extend(t_tags.split('<br>'))
+				nodes.append("{{id : {0}, label : '{1}', title : '{2}', shape : 'circle', group : {3}}}".format(node_map[x], x, t_tags, year_groups[int(x.split('_')[0])]))
 			edges.append("{{from : {0}, to : {1}, arrows: 'to', width : 3, length :200}}".format(node_map[x], node_map[key]))
 
-	return apply_vis_js_template(nodes, edges)
+	return (apply_vis_js_template(nodes, edges), ', '.join(get_common_tags(graph_tags)))
 				
 
 if __name__ == '__main__':
-	root_folder = '/home/hduser/iit_data/ask_ubuntu/models/graph_similarity_matrices'
-	vis_folder = '/home/hduser/iit_data/ask_ubuntu/models/visualization'
+	root_folder = '/home/vparambath/workpad/iith/models/graph_similarity_matrices'
+	vis_folder = '/home/vparambath/workpad/iith/models/visualization'
 	vis_template = 'vis_template.html'
 
 	create_temporal_chains(root_folder)
@@ -107,8 +116,8 @@ if __name__ == '__main__':
 
 	counter = 0
 	for chain in master_chains:
-		vis_data = create_vis_data(chain)
+		vis_data, top_tags_data = create_vis_data(chain)
 		file_name = '{0}_chain.html'.format(counter)
 		with open(os.path.join(vis_folder, file_name), 'w') as fp:
-			fp.write(template_data.format(file_name.split('.')[0], vis_data))
+			fp.write(template_data.format(file_name.split('.')[0], vis_data, top_tags_data))
 		counter += 1

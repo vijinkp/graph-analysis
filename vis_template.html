@@ -18,6 +18,13 @@ var data = {{
   edges: edges
 }};
 var options = {{
+	nodes: {{shape: 'circle',
+            borderWidth: 2,
+            shadow:true
+        }},
+        edges: {{
+            shadow:true
+        }},
   layout: {{
       hierarchical: {{
           direction: "Left-Right",
@@ -29,6 +36,10 @@ var network = new vis.Network(container, data, options);}}
 </script>
 </head>
 <body onload="draw()">
+<h3><u>Top Community Tags</u></h3>
+<div style="font-size:18px; text-align: justify;">
+<b>{2}</b>
+</div>
 <div id="mynetwork"></div>
 </body>
 </html>
