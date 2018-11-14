@@ -7,7 +7,7 @@ from collections import Counter
 
 master_chains = []
 years = [2010, 2011, 2012, 2013, 2014, 2015, 2016]
-community_data_folder = '/home/vparambath/workpad/iith/year_wise_communities'
+community_data_folder = '/home/hduser/iit_data/ask_ubuntu/year_wise_communities'
 year_groups = {2010 : 0, 2011 : 1, 2012 : 2, 2013 : 3, 2014 : 4, 2015 : 5, 2016 : 6, 2017 : 7, 2018 : 8}
 #years = [2010, 2011]
 
@@ -75,6 +75,14 @@ def get_tags(community_name):
 def get_common_tags(tags, n = 10):
 	return [tag for tag, tag_count in Counter(tags).most_common(n)]
 
+def save_temporal_chain(chain, filepath):
+	nodes = []
+	nodes.extend(list(chain.keys()))
+	nodes.extend([x for values in chain.values() for x in values])
+	nodes = set(nodes)
+	with open(filepath, 'w') as fp:
+		fp.write('\n'.join(sorted(nodes)))
+
 def apply_vis_js_template(nodes, edges):
 	return "var nodes = [{0}];\nvar edges = [{1}];".format(','.join(nodes), ','.join(edges))
 	
@@ -105,19 +113,22 @@ def create_vis_data(graph):
 				
 
 if __name__ == '__main__':
-	root_folder = '/home/vparambath/workpad/iith/models/graph_similarity_matrices'
-	vis_folder = '/home/vparambath/workpad/iith/models/visualization'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu/models/graph_similarity_matrices'
+	vis_folder = '/home/hduser/iit_data/ask_ubuntu/models/visualization'
+	out_folder = '/home/hduser/iit_data/ask_ubuntu/models/temporal_chains'
 	vis_template = 'vis_template.html'
 
 	create_temporal_chains(root_folder)
 
 	with open(vis_template, 'r') as fp:
 		template_data = fp.read()
-
 	counter = 0
 	for chain in master_chains:
+		vis_file_name = '{0}_chain.html'.format(counter)
+		file_name = '{0}_chain.txt'.format(counter)
+		save_temporal_chain(chain, os.path.join(out_folder, file_name))
 		vis_data, top_tags_data = create_vis_data(chain)
-		file_name = '{0}_chain.html'.format(counter)
-		with open(os.path.join(vis_folder, file_name), 'w') as fp:
-			fp.write(template_data.format(file_name.split('.')[0], vis_data, top_tags_data))
+		
+		with open(os.path.join(vis_folder, vis_file_name), 'w') as fp:
+			fp.write(template_data.format(vis_file_name.split('.')[0], vis_data, top_tags_data))
 		counter += 1
