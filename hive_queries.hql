@@ -1,7 +1,8 @@
-create database stackoverflow_raw;
+create database askubuntu_raw;
 create table posts (xmlstring string);
+create table users (xmlstring string);
 
-INSERT OVERWRITE LOCAL DIRECTORY '/home/hduser/iit_data/stack_overflow/posts'
+INSERT OVERWRITE LOCAL DIRECTORY '/home/hduser/iit_data/ask_ubuntu/posts'
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '\u0001'
 STORED AS TEXTFILE
@@ -26,3 +27,25 @@ xpath_int(xmlstring,'//row/@FavoriteCount') as favorite_count,
 from_unixtime(unix_timestamp(regexp_replace(xpath_string(xmlstring,'//row/@CommunityOwnedDate'), 'T',' '))) as community_owned_date
 FROM posts
 WHERE xmlstring NOT LIKE '%<?xml version=%' AND xmlstring  NOT LIKE '%posts>';
+
+
+INSERT OVERWRITE LOCAL DIRECTORY '/home/hduser/iit_data/ask_ubuntu/users'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\u0001'
+STORED AS TEXTFILE
+SELECT 
+xpath_int(xmlstring,'//row/@Id') as id,
+xpath_int(xmlstring,'//row/@Reputation') as reputation,
+from_unixtime(unix_timestamp(regexp_replace(xpath_string(xmlstring,'//row/@CreationDate'), 'T',' '))) as creation_date,
+regexp_replace(xpath_string(xmlstring,'//row/@DisplayName'),"\n","") as display_name,
+from_unixtime(unix_timestamp(regexp_replace(xpath_string(xmlstring,'//row/@LastAccessDate'), 'T',' '))) as lastaccess_date,
+regexp_replace(xpath_string(xmlstring,'//row/@WebsiteUrl'),"\n","") as website_url,
+regexp_replace(xpath_string(xmlstring,'//row/@Location'),"\n","") as location,
+regexp_replace(xpath_string(xmlstring,'//row/@AboutMe'),"\n","") as about_me,
+xpath_int(xmlstring,'//row/@Views') as views,
+xpath_int(xmlstring,'//row/@UpVotes') as upvotes,
+xpath_int(xmlstring,'//row/@DownVotes') as downvotes,
+regexp_replace(xpath_string(xmlstring,'//row/@ProfileImageUrl'), "\n", "") as profile_image_url,
+xpath_int(xmlstring,'//row/@AccountId') as account_id
+FROM users
+WHERE xmlstring NOT LIKE '%<?xml version=%' AND xmlstring  NOT LIKE '%users>';
