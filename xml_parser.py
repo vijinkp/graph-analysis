@@ -1,6 +1,7 @@
 import xml.etree.ElementTree
 import pandas as pd
 import dateutil.parser
+import re
 
 
 def process_user_data(input_file, output_file):
@@ -27,13 +28,18 @@ def process_post_data(input_file, output_file, date_cols):
 
 	post_data = pd.DataFrame.from_dict(post_list)
 	for col in post_data.columns:
-		post_data[col] = post_data[col].apply(lambda x : str(x).replace('\n', '').strip())
+		if col == 'Body' or col == 'Title':
+			post_data[col] = post_data[col].apply(lambda x : re.sub('[^A-Za-z0-9]+', '', str(x).replace('\n', '').strip()))
+		else:
+			post_data[col] = post_data[col].apply(lambda x : str(x).replace('\n', '').strip())
 
-	for col in date_cols:
-		post_data[col] = post_data[col].apply(lambda x : dateutil.parser.parse(x))
+
+	# for col in date_cols:
+	# 	post_data[col] = post_data[col].apply(lambda x : dateutil.parser.parse(x))
 
 	post_data.Id = post_data.Id.astype('float')
 	post_data.AcceptedAnswerId = post_data.AcceptedAnswerId.astype('float')
+	post_data['CreationYear'] = post_data.CreationDate.str.slice(start=0,stop=4)
 	post_data.to_csv(output_file, sep='\u0001', index=False)
 
 
@@ -42,4 +48,4 @@ if __name__ == '__main__':
 	# TO DO: Resolve error parsing on NAN values.
 	date_cols = ['CreationDate']
 	process_post_data('/home/hduser/iit_data/ask_ubuntu/Posts.xml', '/home/hduser/iit_data/ask_ubuntu/posts-clean.csv', date_cols)
-	process_user_data('/home/hduser/iit_data/ask_ubuntu/Users.xml', '/home/hduser/iit_data/ask_ubuntu/users.csv')
+	process_user_data('/home/hduser/iit_data/ask_ubuntu/Users.xml', '/home/hduser/iit_data/ask_ubuntu/users-clean.csv')

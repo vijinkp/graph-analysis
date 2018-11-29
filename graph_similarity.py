@@ -22,9 +22,9 @@ def create_kernel_csv(kernel, row_labels, col_labels, file_path):
 
 
 if __name__ == '__main__':
-	root_folder = '/home/hduser/iit_data/ask_ubuntu/year_wise_communities'
-	master_map_path = '/home/hduser/iit_data/ask_ubuntu/models/master_index.pkl'
-	outpath = '/home/hduser/iit_data/ask_ubuntu/models/graph_similarity_matrices'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
+	master_map_path = '/home/hduser/iit_data/ask_ubuntu_mc/models/master_index.pkl'
+	outpath = '/home/hduser/iit_data/ask_ubuntu_mc/models/graph_similarity_matrices'
 
 	os.makedirs(outpath)
 
@@ -52,5 +52,5 @@ if __name__ == '__main__':
 		best_match = np.argmax(K_WL_subset, axis=1)
 		with open('{0}/WL-{1}-{2}-best-match.txt'.format(outpath, yr1, yr2), 'w')as fp:
 			for index, x in enumerate(best_match):
-				if K_WL_subset[index][x] > 1:
-					fp.write('{0}, {1}\n'.format(yr1_labels[index],yr2_labels[int(x)]))
+				if K_WL_subset[index][x] > 2:
+					fp.write('{0}, {1}, {2}\n'.format(yr1_labels[index],yr2_labels[int(x)], K_WL_subset[index][x]))

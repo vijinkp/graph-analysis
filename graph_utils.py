@@ -19,10 +19,10 @@ def convert_to_graphml(input_file, output_file, master_map):
 
 
 if __name__ == '__main__':
-	input_path = '/home/hduser/iit_data/ask_ubuntu/year_wise_named_graphs'
-	output_pajek_path = '/home/hduser/iit_data/ask_ubuntu/year_wise_graphs_pajek'
-	output_graphml_path = '/home/hduser/iit_data/ask_ubuntu/year_wise_graphs_graphml'
-	master_map_path = '/home/hduser/iit_data/ask_ubuntu/models/master_index.pkl'
+	input_path = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_named_graphs'
+	output_pajek_path = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_graphs_pajek'
+	output_graphml_path = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_graphs_graphml'
+	master_map_path = '/home/hduser/iit_data/ask_ubuntu_mc/models/master_index.pkl'
 	master_map = joblib.load(master_map_path)
 
 	os.makedirs(output_pajek_path)

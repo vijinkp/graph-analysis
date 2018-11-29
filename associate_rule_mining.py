@@ -7,7 +7,7 @@ import os
 
 master_index = {}
 
-def create_graph(input_file, output_file, output_named_file, min_transactions = 2, confidence = 0.02 ):
+def create_graph(input_file, output_file, output_named_file, year_count, min_transactions = 2, confidence = 0.02 ):
 	print('Creating graph for : {0}'.format(input_file))
 	with open(input_file, 'r') as fp:
 		lines = fp.read()
@@ -43,7 +43,7 @@ def create_graph(input_file, output_file, output_named_file, min_transactions = 
 
 if __name__ == '__main__':
 
-	root_folder = '/home/hduser/iit_data/ask_ubuntu/'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu_mc/'
 
 	os.makedirs(os.path.join(root_folder, 'year_wise_graphs'))
 	os.makedirs(os.path.join(root_folder, 'year_wise_named_graphs'))
@@ -53,7 +53,10 @@ if __name__ == '__main__':
 	output_folder = os.path.join(root_folder, 'year_wise_graphs')
 	output_name_folder = os.path.join(root_folder, 'year_wise_named_graphs')
 	model_folder = os.path.join(root_folder, 'models')
+
+	year_count_map = joblib.load('/home/hduser/iit_data/ask_ubuntu_mc/year_qn_count.pkl')
 	
 	for file in listdir(input_folder):
-		create_graph(join(input_folder, file), join(output_folder, file), join(output_name_folder, file))
+		year = int(file.split('.')[0].strip())
+		create_graph(join(input_folder, file), join(output_folder, file), join(output_name_folder, file), year_count_map[year])
 	joblib.dump(master_index, join(model_folder, 'master_index.pkl'), compress=1)
