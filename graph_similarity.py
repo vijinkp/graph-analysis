@@ -47,6 +47,14 @@ if __name__ == '__main__':
 		joblib.dump(K_WL_subset, '{0}/WL-{1}-{2}.pkl'.format(outpath, yr1, yr2), compress = 1)
 		create_kernel_csv(K_WL_subset, yr1_labels, yr2_labels, '{0}/WL-{1}-{2}.csv'.format(outpath, yr1, yr2))
 
+		# multiplying penalising coeff to block small communities getting merged with very large communities. 
+		row_len , col_len = K_WL_subset.shape
+		yr1_graph_sizes = [g.vcount() for g in yr1_graphs]
+		yr2_graph_sizes = [g.vcount() for g in yr2_graphs]
+
+		penalize_coeff = np.array([x/float(y) for x,y in list(itertools.product(yr1_graph_sizes,yr2_graph_sizes))]).reshape(row_len, col_len)
+		sim_matrix = np.multiply(K_WL_subset, penalize_coeff)
+
 		# only merge and one to one matching is possible, split is not possible
 		# split can be defined by setting a threshold which will help to identify if a community is matched with more than one on next time interval
 		best_match = np.argmax(K_WL_subset, axis=1)
