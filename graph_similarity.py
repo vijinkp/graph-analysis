@@ -4,6 +4,7 @@ from os import listdir
 from igraph import *
 from sklearn.externals import joblib
 import os
+import itertools
 
 def get_igraph(file, master_map):
 	graph = Graph.Read_Pajek(file)
@@ -52,13 +53,18 @@ if __name__ == '__main__':
 		yr1_graph_sizes = [g.vcount() for g in yr1_graphs]
 		yr2_graph_sizes = [g.vcount() for g in yr2_graphs]
 
-		penalize_coeff = np.array([x/float(y) for x,y in list(itertools.product(yr1_graph_sizes,yr2_graph_sizes))]).reshape(row_len, col_len)
+		#penalize_coeff = np.array([x/float(y) for x,y in list(itertools.product(yr1_graph_sizes,yr2_graph_sizes))]).reshape(row_len, col_len)
+		# 1/abs(x-y)+1
+		penalize_coeff = np.array([1/float((np.abs(x-y)+1)) for x,y in list(itertools.product(yr1_graph_sizes,yr2_graph_sizes))]).reshape(row_len, col_len)
 		sim_matrix = np.multiply(K_WL_subset, penalize_coeff)
 
 		# only merge and one to one matching is possible, split is not possible
 		# split can be defined by setting a threshold which will help to identify if a community is matched with more than one on next time interval
-		best_match = np.argmax(K_WL_subset, axis=1)
+		#best_match = np.argmax(K_WL_subset, axis=1)
+		best_match = np.argmax(sim_matrix, axis=1)
 		with open('{0}/WL-{1}-{2}-best-match.txt'.format(outpath, yr1, yr2), 'w')as fp:
 			for index, x in enumerate(best_match):
-				if K_WL_subset[index][x] > 2:
-					fp.write('{0}, {1}, {2}\n'.format(yr1_labels[index],yr2_labels[int(x)], K_WL_subset[index][x]))
+				if sim_matrix[index][x] >= 0.25 and K_WL_subset[index][x] > 1:
+					fp.write('{0}, {1}, {2}\n'.format(yr1_labels[index],yr2_labels[int(x)], sim_matrix[index][x]))
+				# if K_WL_subset[index][x] > 1:
+				# 	fp.write('{0}, {1}, {2}\n'.format(yr1_labels[index],yr2_labels[int(x)], K_WL_subset[index][x]))

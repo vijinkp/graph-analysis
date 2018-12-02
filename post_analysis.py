@@ -9,7 +9,7 @@ from collections import Counter
 
 warnings.filterwarnings('ignore')
 
-community_data_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_chains_2'
+community_data_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_chains'
 community_tags_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
 
 def process_post_data(input_file, date_cols):
