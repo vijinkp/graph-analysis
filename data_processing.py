@@ -16,14 +16,15 @@ data['CleanedTags'] = data.Tags.apply(lambda x : str(x).replace("><", ",").repla
 
 # Question posts
 question_posts =  data[data.PostTypeId == 1]
-question_posts.to_csv('/home/hduser/iit_data/ask_ubuntu_mc/question_posts.csv', index=False)
-joblib.dump(question_posts.groupby(by='CreationYear').count().Id.to_dict(), '/home/hduser/iit_data/ask_ubuntu_mc/year_qn_count.pkl', compress=1)	
+question_posts.to_csv('/home/hduser/iit_data/ask_ubuntu_new/question_posts.csv', index=False)
+joblib.dump(question_posts.groupby(by='CreationYear').count().Id.to_dict(), '/home/hduser/iit_data/ask_ubuntu_new/year_qn_count.pkl', compress=1)
 
-os.makedirs('/home/hduser/iit_data/ask_ubuntu_mc/year_wise')
-[question_posts[question_posts.CreationYear == year][['CleanedTags']].to_csv('/home/hduser/iit_data/ask_ubuntu_mc/year_wise/{0}.txt'.format(year), index=False, quotechar="\"", header=False) for year in question_posts.CreationYear.unique()]
 
-os.makedirs('/home/hduser/iit_data/ask_ubuntu_mc/year_wise_question_data')
-[question_posts[question_posts.CreationYear == year].to_csv('/home/hduser/iit_data/ask_ubuntu_mc/year_wise_question_data/{0}.csv'.format(year), index=False, sep='\u0001') for year in question_posts.CreationYear.unique()]
+os.makedirs('/home/hduser/iit_data/ask_ubuntu_new/year_wise')
+[question_posts[question_posts.CreationYear == year][['CleanedTags']].to_csv('/home/hduser/iit_data/ask_ubuntu_new/year_wise/{0}.txt'.format(year), index=False, quotechar="\"", header=False) for year in question_posts.CreationYear.unique()]
 
-os.makedirs('/home/hduser/iit_data/ask_ubuntu_mc/year_wise_data')
-[data[data.CreationYear == year].to_csv('/home/hduser/iit_data/ask_ubuntu_mc/year_wise_data/{0}.csv'.format(year), index=False, sep='\u0001') for year in question_posts.CreationYear.unique()]
+os.makedirs('/home/hduser/iit_data/ask_ubuntu_new/year_wise_question_data')
+[question_posts[question_posts.CreationYear == year].to_csv('/home/hduser/iit_data/ask_ubuntu_new/year_wise_question_data/{0}.csv'.format(year), index=False, sep='\u0001') for year in question_posts.CreationYear.unique()]
+
+os.makedirs('/home/hduser/iit_data/ask_ubuntu_new/year_wise_data')
+[data[data.CreationYear == year].to_csv('/home/hduser/iit_data/ask_ubuntu_new/year_wise_data/{0}.csv'.format(year), index=False, sep='\u0001') for year in question_posts.CreationYear.unique()]

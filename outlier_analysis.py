@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 def plot_dist_data(data):
 	plt.figure(figsize=(12,8))
 	sns.distplot(data)
-	plt.savefig('/home/hduser/iit_data/ask_ubuntu_mc/models/qn_count_slope.jpg')
+	plt.savefig('/home/hduser/iit_data/ask_ubuntu_new/models/qn_count_slope.jpg')
 
 def get_outlier_intervals(data, no_sds = 2, plot = True):
 	chains = data.chain.unique()
@@ -39,7 +39,7 @@ def identify_outlier_chains(data, interval):
 	return outlier_chains
 
 if __name__ == '__main__':
-	data = pd.read_csv('/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_data.csv')
+	data = pd.read_csv('/home/hduser/iit_data/ask_ubuntu_new/models/temporal_data.csv')
 	outlier_interval = get_outlier_intervals(data)
 	print('Outlier : [{0}, {1}]'.format(outlier_interval[0], outlier_interval[1]))
 	outlier_chains = identify_outlier_chains(data, outlier_interval)

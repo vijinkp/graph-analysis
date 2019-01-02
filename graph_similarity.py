@@ -23,9 +23,9 @@ def create_kernel_csv(kernel, row_labels, col_labels, file_path):
 
 
 if __name__ == '__main__':
-	root_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
-	master_map_path = '/home/hduser/iit_data/ask_ubuntu_mc/models/master_index.pkl'
-	outpath = '/home/hduser/iit_data/ask_ubuntu_mc/models/graph_similarity_matrices'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_communities'
+	master_map_path = '/home/hduser/iit_data/ask_ubuntu_new/models/master_index.pkl'
+	outpath = '/home/hduser/iit_data/ask_ubuntu_new/models/graph_similarity_matrices'
 
 	os.makedirs(outpath)
 

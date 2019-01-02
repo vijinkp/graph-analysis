@@ -9,8 +9,8 @@ from collections import Counter
 
 warnings.filterwarnings('ignore')
 
-community_data_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_chains'
-community_tags_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
+community_data_folder = '/home/hduser/iit_data/ask_ubuntu_new/models/temporal_chains'
+community_tags_folder = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_communities'
 
 def process_post_data(input_file, date_cols):
 	root = xml.etree.ElementTree.parse(input_file).getroot()
@@ -49,7 +49,7 @@ def get_tags(year, community_ids):
 
 def get_question_data(year, tags, data):
 	year_data = data[data['CreationYear'] == year]
-	return year_data[year_data.tag_arr.apply(lambda x : common_member(x, tags))][['Id','AcceptedAnswerId','AnswerCount', 'FavoriteCount']] 
+	return year_data[year_data.tag_arr.apply(lambda x : common_member(x, tags))][['Id','AcceptedAnswerId','AnswerCount', 'FavoriteCount', 'ViewCount']] 
 
 if __name__ == '__main__':
 
@@ -99,6 +99,9 @@ if __name__ == '__main__':
  			# sum of favourite count
  			favourite_count = np.sum(qn_ans_data.FavoriteCount)
 
+ 			# sum of view count
+ 			view_count = np.sum(qn_ans_data.ViewCount)
+
  			# find users
  			join_data = qn_ans_data.join(answer_data.set_index('Id', inplace=False), on='AcceptedAnswerId', rsuffix='_ans', how='left')
  			unique_users = list(join_data.OwnerUserId.unique())
@@ -112,14 +115,14 @@ if __name__ == '__main__':
  			# Number of answers provided by users on that year
  			answer_year_data = answer_data[answer_data.CreationYear == year]
  			user_answer_count = answer_year_data[answer_year_data.OwnerUserId.isin(unique_users)].shape[0]
- 			temporal_data.append(global_sep.join([file, str(year), ':'.join(tags), str(user_size), str(qn_size), str(reputation_score), str(user_answer_count), str(answer_count), str(favourite_count)]))
+ 			temporal_data.append(global_sep.join([file, str(year), ':'.join(tags), str(user_size), str(qn_size), str(reputation_score), str(user_answer_count), str(answer_count), str(favourite_count), str(view_count)]))
  		chain_tag_str.append(file +','+ ':'.join([tag for tag, tag_count in Counter(tag_list).most_common(10)]))
  	
- 	schema = ['chain', 'year', 'tags', 'no_users', 'no_questions', 'sum_reputation', 'user_answer_count', 'answer_count', 'favourite_count']
- 	with open('/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_data.csv', 'w') as fp:
+ 	schema = ['chain', 'year', 'tags', 'no_users', 'no_questions', 'sum_reputation', 'user_answer_count', 'answer_count', 'favourite_count', 'view_count']
+ 	with open('/home/hduser/iit_data/ask_ubuntu_new/models/temporal_data.csv', 'w') as fp:
  		fp.write(','.join(schema) +'\n'+('\n'.join(temporal_data)))
 
- 	with open('/home/hduser/iit_data/ask_ubuntu_mc/models/top_10_tags.csv', 'w') as fp1:
+ 	with open('/home/hduser/iit_data/ask_ubuntu_new/models/top_10_tags.csv', 'w') as fp1:
  		fp1.write('chain,tags' + '\n' + ('\n'.join(chain_tag_str)))
 
 

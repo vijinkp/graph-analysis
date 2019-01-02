@@ -32,18 +32,21 @@ def create_graph(input_file, output_file, output_named_file, year_count, min_tra
 
 	with open(output_file, 'w') as fp1:
 		for rule in pair_rules:
-			fp1.write('{0} {1} {2}\n'.format(list(rule[0])[0],list(rule[1])[0],rule[2]/float(count_map[list(rule[0])[0]])))
+			#fp1.write('{0} {1} {2}\n'.format(list(rule[0])[0],list(rule[1])[0],rule[2]/float(count_map[list(rule[0])[0]])))
+			fp1.write('{0} {1} {2}\n'.format(list(rule[0])[0],list(rule[1])[0],rule[2]/float(year_count)))
 
 	master_index_rev = dict((v,k) for k,v in master_index.items())
 	with open(output_named_file, 'w') as fp1:
 		for rule in pair_rules:
-			fp1.write('{0} {1} {2}\n'.format(master_index_rev[list(rule[0])[0]],master_index_rev[list(rule[1])[0]],rule[2]/float(count_map[list(rule[0])[0]])))
+			#fp1.write('{0} {1} {2}\n'.format(master_index_rev[list(rule[0])[0]],master_index_rev[list(rule[1])[0]],rule[2]/float(count_map[list(rule[0])[0]])))
+			fp1.write('{0} {1} {2}\n'.format(master_index_rev[list(rule[0])[0]],master_index_rev[list(rule[1])[0]],rule[2]/float(year_count)))
+
 
 	print('Finished creating graph..')
 
 if __name__ == '__main__':
 
-	root_folder = '/home/hduser/iit_data/ask_ubuntu_mc/'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu_new/'
 
 	os.makedirs(os.path.join(root_folder, 'year_wise_graphs'))
 	os.makedirs(os.path.join(root_folder, 'year_wise_named_graphs'))
@@ -54,9 +57,9 @@ if __name__ == '__main__':
 	output_name_folder = os.path.join(root_folder, 'year_wise_named_graphs')
 	model_folder = os.path.join(root_folder, 'models')
 
-	year_count_map = joblib.load('/home/hduser/iit_data/ask_ubuntu_mc/year_qn_count.pkl')
+	year_count_map = joblib.load('/home/hduser/iit_data/ask_ubuntu_new/year_qn_count.pkl')
 	
 	for file in listdir(input_folder):
-		year = int(file.split('.')[0].strip())
+		year = file.split('.')[0].strip()
 		create_graph(join(input_folder, file), join(output_folder, file), join(output_name_folder, file), year_count_map[year])
 	joblib.dump(master_index, join(model_folder, 'master_index.pkl'), compress=1)

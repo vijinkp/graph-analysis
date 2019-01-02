@@ -29,9 +29,9 @@ def create_communities(input_file, output_folder, master_map):
 				fp.write('\n'.join(subgraph.vs['id']))
 
 if __name__ == '__main__':
-	input_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_graphs_pajek'
-	output_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
-	master_map_path = '/home/hduser/iit_data/ask_ubuntu_mc/models/master_index.pkl'
+	input_folder = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_graphs_pajek'
+	output_folder = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_communities'
+	master_map_path = '/home/hduser/iit_data/ask_ubuntu_new/models/master_index.pkl'
 	master_map = joblib.load(master_map_path)
 
 	for file in listdir(input_folder):

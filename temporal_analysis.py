@@ -7,7 +7,7 @@ from collections import Counter
 
 master_chains = []
 years = [2010, 2011, 2012, 2013, 2014, 2015, 2016]
-community_data_folder = '/home/hduser/iit_data/ask_ubuntu_mc/year_wise_communities'
+community_data_folder = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_communities'
 year_groups = {2010 : 0, 2011 : 1, 2012 : 2, 2013 : 3, 2014 : 4, 2015 : 5, 2016 : 6, 2017 : 7, 2018 : 8}
 #years = [2010, 2011]
 
@@ -113,9 +113,9 @@ def create_vis_data(graph):
 				
 
 if __name__ == '__main__':
-	root_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/graph_similarity_matrices'
-	vis_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/visualization'
-	out_folder = '/home/hduser/iit_data/ask_ubuntu_mc/models/temporal_chains'
+	root_folder = '/home/hduser/iit_data/ask_ubuntu_new/models/graph_similarity_matrices'
+	vis_folder = '/home/hduser/iit_data/ask_ubuntu_new/models/visualization'
+	out_folder = '/home/hduser/iit_data/ask_ubuntu_new/models/temporal_chains'
 	vis_template = 'vis_template.html'
 	
 	os.makedirs(vis_folder)
