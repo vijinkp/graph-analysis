@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<title>{0}</title>
+<style type="text/css">
+#mynetwork {{width:1600px;height: 1000px;border: 1px solid lightgray;}}
+</style>
+<script type="text/javascript" src="dist/vis.js"></script>
+<link href="dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+function draw() {{
+// create some nodes
+{1}
+// create a network
+var container = document.getElementById('mynetwork');
+var data = {{
+  nodes: nodes,
+  edges: edges
+}};
+var options = {{
+	nodes: {{shape: 'circle',
+            borderWidth: 2,
+            shadow:true
+        }},
+        edges: {{
+            shadow:true
+        }}
+}};
+var network = new vis.Network(container, data, options);}}
+</script>
+</head>
+<body onload="draw()">
+<div id="mynetwork"></div>
+</body>
+</html>

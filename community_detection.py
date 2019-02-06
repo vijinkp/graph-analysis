@@ -20,6 +20,10 @@ def create_communities(input_file, output_folder, master_map):
 		# Save cluster subgraphs
 		for index, subgraph in enumerate(communities.subgraphs()):
 			subgraph.write_pajek(os.path.join(output_folder, 'communities_pajek', '{0}.net'.format(index)))
+			
+
+			subgraph.vs['name'] = subgraph.vs['id']
+			subgraph.write_ncol(os.path.join(output_folder, 'communities_ncol', '{0}.ncol'.format(index)))
 
 			subgraph.vs['label'] = [master_map[name] for name in subgraph.vs['id']]
 			subgraph.es['label'] = subgraph.es['weight']
@@ -38,6 +42,7 @@ if __name__ == '__main__':
 		print(file)
 		file_name = file.split('.')[0]
 		os.makedirs(os.path.join(output_folder, file_name))
+		os.makedirs(os.path.join(output_folder, file_name, 'communities_ncol'))
 		os.makedirs(os.path.join(output_folder, file_name, 'communities_pajek'))
 		os.makedirs(os.path.join(output_folder, file_name, 'communities_graphml'))
 		os.makedirs(os.path.join(output_folder, file_name, 'community_tags'))
