@@ -2,6 +2,7 @@ import networkx as nx
 import numpy as np
 from node2vec import Node2Vec
 import pandas as pd
+import os
 
 
 def get_networkx_graph(graph_path, nodetype=str):
@@ -52,61 +53,74 @@ def add_graphs(file_paths, out_path):
 
 if __name__ == '__main__':
 
-	t1 = '2010'
-	t2 = '2011'
+	years = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017']
+	input_data_path = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_named_graphs'
+	output_path = '/home/hduser/iit_data/ask_ubuntu_new/node_resolution'
+	high_thresholds = (0.8,1.0) 
 
-	file_paths = {'2010' : '/home/hduser/iit_data/ask_ubuntu_new/year_wise_named_graphs/2010.txt', 
-	'2011' : '/home/hduser/iit_data/ask_ubuntu_new/year_wise_named_graphs/2011.txt'}
+	for t1, t2 in list(zip(years[0::1],years[1::1])):
+		file_paths = {t1 : os.path.join(input_data_path, '{}.txt'.format(t1)), t2 : os.path.join(input_data_path, '{}.txt'.format(t2))}
 
-	out_path = '/home/hduser/iit_data/tmp/add_2010_2011.ncol'
-	result_path = '/home/hduser/iit_data/tmp/results_2010_2011.csv'
-	result_path1 = '/home/hduser/iit_data/tmp/results_2010_2011_yrsim.csv'
-	sim_score_grps = list(zip(np.arange(0,1.1,0.1)[0::1], np.arange(0,1.1,0.1)[1::1]))
+		out_path = os.path.join(output_path, 'add_{0}_{1}.ncol'.format(t1,t2))
+		result_path = os.path.join(output_path, 'node_sim_{0}_{1}.csv'.format(t1,t2))
+		result_path1 = os.path.join(output_path, 'yr_node_sim_{0}_{1}.csv'.format(t1,t2))
+		high_threshold_path = os.path.join(output_path, 'yr_node_ht_sim_{0}_{1}.csv'.format(t1,t2))
+		
+		sim_score_grps = list(zip(np.arange(0,1.1,0.1)[0::1], np.arange(0,1.1,0.1)[1::1]))
 
-	graph_label_map = add_graphs(file_paths, out_path)
-	graph = get_networkx_graph(out_path)
-	model = get_graph_embedding_model(graph)
-	nodes = model.wv.index2word
-	
-	# Only year1 nodes are compared aganist year2 nodes
-	t1_nodes = get_valid_nodes(model,graph_label_map[t1])
-	t2_nodes = get_valid_nodes(model,graph_label_map[t2])
+		graph_label_map = add_graphs(file_paths, out_path)
+		graph = get_networkx_graph(out_path)
+		model = get_graph_embedding_model(graph)
+		nodes = model.wv.index2word
 
-	# nodes which are not present in t1
-	t2_updated_nodes = list(t2_nodes.difference(t1_nodes))
-	t1_nodes = list(t1_nodes)
+		# Only year1 nodes are compared aganist year2 nodes
+		t1_nodes = get_valid_nodes(model,graph_label_map[t1])
+		t2_nodes = get_valid_nodes(model,graph_label_map[t2])
 
-	print('Number of nodes in t1 : {}'.format(len(t1_nodes)))
-	print('Number of nodes in t2 : {}'.format(len(list(t2_nodes))))
-	print('Number of new nodes in t2 : {}'.format(len(t2_updated_nodes)))
+		# nodes which are not present in t1
+		t2_updated_nodes = list(t2_nodes.difference(t1_nodes))
+		t1_nodes = list(t1_nodes)
 
-	node_yr_similarity_matrix = get_yearwise_node_similarity_matrix(model, t1_nodes, t2_updated_nodes)
-	year_sim_data = []
-	for i in range(node_yr_similarity_matrix.shape[0]):
-		node_data = []
-		node = t1_nodes[i]
-		node_sim_arr = node_yr_similarity_matrix[i]
-		node_data.append(node)
-		for lb, ub in sim_score_grps:
-			sim_node_str = ':'.join(list(np.array(t2_updated_nodes)[list(np.where((node_sim_arr >= lb) & (node_sim_arr < ub))[0])]))
-			node_data.append(sim_node_str)
-		year_sim_data.append(node_data)
+		print('Number of nodes in t1 : {}'.format(len(t1_nodes)))
+		print('Number of nodes in t2 : {}'.format(len(list(t2_nodes))))
+		print('Number of new nodes in t2 : {}'.format(len(t2_updated_nodes)))
 
-	dataframe = pd.DataFrame(year_sim_data, columns=['nodes'] + [str(x) for x in sim_score_grps])
-	dataframe.to_csv(result_path1, index=False)
+		node_yr_similarity_matrix = get_yearwise_node_similarity_matrix(model, t1_nodes, t2_updated_nodes)
+		year_sim_data = []
+		ht_yr_sim_data = []
+		for i in range(node_yr_similarity_matrix.shape[0]):
+			node_data = []
+			node = t1_nodes[i]
+			node_sim_arr = node_yr_similarity_matrix[i]
+			node_data.append(node)
+			# High thresholds to another file
+			ht_str = ':'.join(list(np.array(t2_updated_nodes)[list(np.where((node_sim_arr >= high_thresholds[0]) & (node_sim_arr < high_thresholds[1]))[0])]))
+			if ht_str != '' :
+				ht_yr_sim_data.append([node, ht_str])
 
-	# full nodes comparison
-	node_similarity_matrix = get_node_similarity_matrix(model)
-	data = []
-	for i in range(node_similarity_matrix.shape[0]):
-		node_data = []
-		node = nodes[i]
-		node_sim_arr = node_similarity_matrix[i]
-		node_data.append(node)
-		for lb, ub in sim_score_grps:
-			sim_node_str = ':'.join(list(np.array(nodes)[list(np.where((node_sim_arr >= lb) & (node_sim_arr < ub))[0])]))
-			node_data.append(sim_node_str)
-		data.append(node_data)
+			for lb, ub in sim_score_grps:
+				sim_node_str = ':'.join(list(np.array(t2_updated_nodes)[list(np.where((node_sim_arr >= lb) & (node_sim_arr < ub))[0])]))
+				node_data.append(sim_node_str)
+			year_sim_data.append(node_data)
 
-	dataframe = pd.DataFrame(data, columns=['nodes'] + [str(x) for x in sim_score_grps])
-	dataframe.to_csv(result_path, index=False)
+		dataframe = pd.DataFrame(year_sim_data, columns=['nodes'] + [str(x) for x in sim_score_grps])
+		dataframe.to_csv(result_path1, index=False)
+
+		ht_df = pd.DataFrame(ht_yr_sim_data, columns=['nodes', 'similar_nodes'])
+		ht_df.to_csv(high_threshold_path, index=False)
+
+		# full nodes comparison
+		node_similarity_matrix = get_node_similarity_matrix(model)
+		data = []
+		for i in range(node_similarity_matrix.shape[0]):
+			node_data = []
+			node = nodes[i]
+			node_sim_arr = node_similarity_matrix[i]
+			node_data.append(node)
+			for lb, ub in sim_score_grps:
+				sim_node_str = ':'.join(list(np.array(nodes)[list(np.where((node_sim_arr >= lb) & (node_sim_arr < ub))[0])]))
+				node_data.append(sim_node_str)
+			data.append(node_data)
+
+		dataframe = pd.DataFrame(data, columns=['nodes'] + [str(x) for x in sim_score_grps])
+		dataframe.to_csv(result_path, index=False)

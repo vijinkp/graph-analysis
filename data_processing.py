@@ -7,6 +7,7 @@ data = pd.read_csv('/home/hduser/iit_data/ask_ubuntu/posts-clean.csv', sep='\u00
 
 # Cleaned tag set and year
 data['CreationYear'] = data.CreationDate.str.slice(start=0,stop=4)
+data['CreationMonth'] = data.CreationDate.str.slice(start=5,stop=7)
 data['CleanedTags'] = data.Tags.apply(lambda x : str(x).replace("><", ",").replace(">", "").replace("<", "").strip())
 
 # Master list of tags
