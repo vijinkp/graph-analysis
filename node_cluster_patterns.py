@@ -57,15 +57,15 @@ def get_slope(row, path):
 	node = row.name
 	slope, intercept, r_value, p_value, std_err = linregress(x, y)
 	
-	y_first = y[:len(y)/2]
+	y_first = y[:int(len(y)/2)]
 	x_first = list(range(1, len(y_first)+1))
 	slope_first, intercept_first, r_value_first, p_value, std_err = linregress(x_first, y_first)
 
-	y_second = y[len(y)/2:]
+	y_second = y[int(len(y)/2):]
 	x_second = list(range(1, len(y_second)+1))
 	slope_second, intercept_second, r_value_second, p_value, std_err = linregress(x_second, y_second)
 
-	#plot_slope(x, y, slope, intercept, r_value, path, node, slope_first, intercept_first, r_value_first, slope_second, intercept_second, r_value_second)
+	plot_slope(x, y, slope, intercept, r_value, path, node, slope_first, intercept_first, r_value_first, slope_second, intercept_second, r_value_second)
 	return slope, intercept, r_value
 
 def plot_slope(x, y, slope, intercept, r_value, path, node, slope_first, intercept_first, r_value_first, slope_second, intercept_second, r_value_second):
@@ -134,7 +134,12 @@ for cluster in clusters_subset:
 	if parent_nodes:
 		possible_parent_clusters[cluster] = parent_nodes
 
-print(possible_parent_clusters)
+possible_parent_csv = []
+for key in possible_parent_clusters.keys():
+	possible_parent_csv.append(key + '\t' + ','.join(possible_parent_clusters[key]))
+
+with open('/home/hduser/iit_data/node_clusters/possible_parents.csv', 'w') as fp:
+	fp.write('\n'.join(possible_parent_csv))
 
 # Classify parent and leader
 for cluster in possible_parent_clusters.keys():

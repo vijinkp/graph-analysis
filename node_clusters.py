@@ -90,7 +90,7 @@ if __name__ == '__main__':
 	#sns.set_palette(sns.color_palette("gist_rainbow", n_colors=35))
 	sns.set()
 
-	root_folder = '/home/hduser/iit_data/tmp'
+	root_folder = '/home/hduser/iit_data/node_clusters'
 	yr_graph_data_path = '/home/hduser/iit_data/ask_ubuntu_new/year_wise_named_graphs'
 	master_graph_path = os.path.join(root_folder, 'master_graph.txt')
 	qn_data_path = '/home/hduser/iit_data/ask_ubuntu_new/question_posts.csv'
@@ -113,6 +113,7 @@ if __name__ == '__main__':
 	create_master_graph(yr_graph_data_path, master_graph_path)
 	graph = get_networkx_graph(master_graph_path)
 	model = get_graph_embedding_model(graph)
+	model.save(os.path.join(root_folder, 'model_full_data.bin'))
 	embedding_data = pd.DataFrame(model.wv.vectors)
 	embedding_data['nodes'] = model.wv.index2word
 	embedding_data.to_csv(os.path.join(root_folder, 'master_graph_embeddings.csv'), index=False)
