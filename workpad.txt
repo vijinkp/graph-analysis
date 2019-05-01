@@ -1,0 +1,61 @@
+Siblings
+- two or more nodes share same neighbours, but each one doesn't have edge between
+
+Examples
+	cluster 32 :  mariadb, postgresql, mysql
+	cluster 33 : sound-recorder,audacity,sox,ardour,output
+	cluster 34 : slideshow, wallch
+	cluster 35 : function-keys,gamma,xbacklight
+	cluster 37 : xfwm4, compton
+
+
+
+LATEX https://www.codecogs.com/latex/eqneditor.php
+
+Siblings
+
+\mbox{Tags}\ tag_i,\ tag_j\ \mbox{are said to be siblings if,}\\
+\\
+neigbour\_overlap\_score(tag_i,tag_j)* no\_edge(tag_i,tag_j)\ge\theta\\
+\\
+where\newline
+\theta\ is\ the\ siblings\ threshold,\newline 
+neigbour\_overlap\_score(tag_i,tag_j)=\frac{|neighbours(tag_i)\cap neighbours(tag_j)|}{max(neighbours(tag_i),neighbours(tag_j))},\newline
+no\_edge(tag_i,tag_j)=
+\left\{ \begin{array}{rcl} 0 & if\ tag_i\ \epsilon\ neighbours(tag_j)\ or \ tag_j\ \epsilon\ neighbours(tag_i) \\ 1 & otherwise \end{array}\right.
+
+Rename
+
+neigbour\_overlap\_score* no\_edge* tag\_match\_ratio\ge\xi\\
+\\
+where\newline
+\xi\ is\ the\ rename\ tag\ threshold,\newline 
+neigbour\_overlap\_score(tag_i,tag_j)=\frac{|neighbours(tag_i)\cap neighbours(tag_j)|}{max(neighbours(tag_i),neighbours(tag_j))},\newline
+no\_edge(tag_i,tag_j)=
+\left\{ \begin{array}{rcl} 0 & if\ tag_i\ \epsilon\ neighbours(tag_j)\ or \ tag_j\ \epsilon\ neighbours(tag_i) \\ 1 & otherwise \end{array}\right.\\
+tag\_match\_ratio(tag_i,tag_j)=\frac{2*matched\ sequences}{Total\ number\ of\ sequences}
+
+
+Parent
+
+scaled\_sum\_of\_distances* max\_count\ge\psi\  \&\ connectivity \ge \tau \\
+\\
+where\newline
+\psi\ is\ farness\ threshold, \tau\ is\ connectivity\ threshold\newline
+scaled\_sum\_of\_distances(tag_i)=\sum_{i\ne j}^{N}||scaled(ts(tag_i))-scaled(ts(tag_j))||
+\\ 
+max\_count(tag_i)=\sum_{k}^{T}is\_max(tag_i,t_k)
+\\
+is\_max(tag_i,t_k)=
+\left\{ \begin{array}{rcl} 1 & if\ tag_i\ has\ maximum\ value\ at\ time\ interval\ t_k \\ 0 & otherwise \end{array}\right.\\
+connectivity=\frac{no.\ of\ outgoing\ edges\ of\ tag_i\ in\ cluster\ tag\ graph}{total\ no.\ of\ tags\ in\ cluster\ tag\ graph}
+
+
+Leader
+scaled\_sum\_of\_distances* max\_count\ge\psi\  \&\ connectivity \le \tau \\
+
+
+Precision
+precision=\frac{|relevant\ instances\cap retrieved\ instances|}{|retrieved\ instances|}
+
+

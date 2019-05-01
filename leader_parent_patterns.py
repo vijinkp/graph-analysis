@@ -136,7 +136,7 @@ for cluster in clusters_subset:
 
 possible_parent_csv = []
 for key in possible_parent_clusters.keys():
-	possible_parent_csv.append(key + '\t' + ','.join(possible_parent_clusters[key]))
+	possible_parent_csv.append(str(key) + '\t' + ','.join(possible_parent_clusters[key]))
 
 with open('/home/hduser/iit_data/node_clusters/possible_parents.csv', 'w') as fp:
 	fp.write('\n'.join(possible_parent_csv))
